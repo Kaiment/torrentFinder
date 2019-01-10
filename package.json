@@ -1,0 +1,20 @@
+{
+  "name": "torrentfinder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^0.22.0",
+    "got": "^5.0.0",
+    "lodash": "^4.17.11",
+    "magnet-uri": "^5.0.0",
+    "q": "^1.4.1",
+    "rarbg": "^1.2.5"
+  }
+}
