@@ -69,10 +69,4 @@ const torrentFinder = {
   },
 };
 
-const movie = {
-  title: 'pirate',
-  moviedbId: 58,
-};
-torrentFinder.search(movie);
-
 module.exports = torrentFinder;
