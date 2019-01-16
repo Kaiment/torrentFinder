@@ -6,7 +6,7 @@ const base = "http://1337x.to";
 
 function parseQuality(title) {
   const info = ptt.parse(title);
-  return info.resolution || null;
+  return info;
 }
 
 const leetx = {
@@ -25,21 +25,19 @@ const leetx = {
         $('tbody > tr').each(function(i, rowElem) {
           $r = cheerio.load($(rowElem).html());
           const title = $r('.coll-1 > a').text();
+          const parsedTitle = parseQuality(title);
           torrents.push({
-            title,
+            title: parsedTitle.title,
             link: base + $r('.coll-1 > a:nth-child(2)').attr('href'),
             seeders: parseInt($r('.coll-2').text()),
             leechers: parseInt($r('.coll-3').text()),
             size: $r('.coll-4').text(),
-            quality: parseQuality(title),
+            quality: parsedTitle.resolution,
           });
         });
-        console.log(torrents)
         return torrents;
       });
   },
 }
-
-leetx.search('iron man');
 
 module.exports = leetx;

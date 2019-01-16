@@ -2,8 +2,7 @@ const RarbgApi = require('rarbg');
 const leetx = require('./1337x.js');
 const axios = require('axios');
 const _ = require('lodash');
-
-const LINK = 'https://github.com/PatrickE94/leetxapi'
+const hc = require('./healthCalculator.js');
 
 const rarbg = new RarbgApi();
 const ytsUri = 'https://yts.am/api/v2/list_movies.json';
@@ -11,11 +10,10 @@ const ytsUri = 'https://yts.am/api/v2/list_movies.json';
 async function rarbgFinder(movie, category) {
   const categorySearch = category || 'movies';
   const result = await rarbg.search({
-    search_themoviedb: movie.moviedbId,
+    search_themoviedb: movie.id,
     sort: 'seeders',
     category: categorySearch,
   });
-  console.log(result);
   return result;
 }
 
@@ -34,7 +32,7 @@ async function ytsFinder(movie) {
         dlLink: t.url,
         seeders: t.seeds,
         leechers: t.peers,
-        ratio: parseFloat((t.seeds / t.peers).toFixed(1), 10),
+        ratio: hc.calcHealth({ seeders: t.seeds, leechers: t.peers }),
       };
       torrents.push(torrent);
     });
@@ -51,12 +49,7 @@ async function leetxFinder(movie) {
   promises = await Promise.all(promises)
   for (j = 0; j < promises.length; j += 1) {
     torrents[j].dlLink = promises[j];
-    if (torrents[j].leechers <= 0) {
-      torrents[j].ratio = torrents[j].seeders;
-    } else {
-      torrents[j].ratio = parseFloat((torrents[j].seeders / torrents[j].leechers).toFixed(1), 10)
-    }
-    torrents[j].quality = null;
+    torrents[j].ratio = hc.calcHealth(torrents[j]);
   }
   return torrents;
 }
@@ -68,8 +61,12 @@ const torrentFinder = {
     promises.push(ytsFinder(movie));
     let torrentArrays = await Promise.all(promises);
     let torrents = torrentArrays[0].concat(torrentArrays[1]);
+    torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
-    console.log(torrents);
+    let selectedTorrents = torrents.filter(torrent => torrent.quality === '1080p');
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '720p'))
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '480p'))
+    return selectedTorrents.splice(0, 20);
   },
 };
 
