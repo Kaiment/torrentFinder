@@ -51,7 +51,11 @@ async function leetxFinder(movie) {
   promises = await Promise.all(promises)
   for (j = 0; j < promises.length; j += 1) {
     torrents[j].dlLink = promises[j];
-    torrents[j].ratio = parseFloat((torrents[j].seeders / torrents[j].leechers).toFixed(1), 10)
+    if (torrents[j].leechers <= 0) {
+      torrents[j].ratio = torrents[j].seeders;
+    } else {
+      torrents[j].ratio = parseFloat((torrents[j].seeders / torrents[j].leechers).toFixed(1), 10)
+    }
     torrents[j].quality = null;
   }
   return torrents;
