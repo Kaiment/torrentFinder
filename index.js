@@ -56,11 +56,17 @@ async function leetxFinder(movie) {
 
 const torrentFinder = {
   async search(movie) {
-    const promises = [];
-    promises.push(leetxFinder(movie));
-    promises.push(ytsFinder(movie));
-    let torrentArrays = await Promise.all(promises);
-    let torrents = torrentArrays[0].concat(torrentArrays[1]);
+    let leetxTorrents = [];
+    let ytsTorrents = [];
+    try {
+      leetxTorrents = await leetxFinder(movie);
+    } catch (err) {
+    }
+    try {
+      ytsTorrents = await ytsFinder(movie);
+    } catch (err) {
+    }
+    let torrents = leetxTorrents.concat(ytsTorrents);
     torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
     let selectedTorrents = torrents.filter(torrent => torrent.quality === '1080p');
