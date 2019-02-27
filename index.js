@@ -69,11 +69,4 @@ const torrentFinder = {
   },
 };
 
-torrentFinder.search({
-  title: 'SPIDER-MAN: INTO THE SPIDER-VERSE',
-  releaseDate: 2018,
-}).then(res => {
-  console.log(res)
-})
-
 module.exports = torrentFinder;
