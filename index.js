@@ -60,12 +60,20 @@ const torrentFinder = {
     let torrents = leetxTorrents.concat(ytsTorrents);
     torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
-    let selectedTorrents = torrents.filter(torrent => torrent.releaseDate === movie.releaseDate);
-    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === '1080p'))
-    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === '720p'))
-    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === undefined))
+    torrents = torrents.filter(torrent => torrent.releaseDate === movie.releaseDate);
+    let selectedTorrents = [];
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '1080p'))
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '720p'))
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === undefined))
     return selectedTorrents.splice(0, 20);
   },
 };
+
+torrentFinder.search({
+  title: 'SPIDER-MAN: INTO THE SPIDER-VERSE',
+  releaseDate: 2018,
+}).then(res => {
+  console.log(res)
+})
 
 module.exports = torrentFinder;
