@@ -58,7 +58,6 @@ const torrentFinder = {
     } catch (err) {
     }
     let torrents = leetxTorrents.concat(ytsTorrents);
-    //console.log(torrents)
     torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
     let selectedTorrents = torrents.filter(torrent => torrent.releaseDate === movie.releaseDate);
