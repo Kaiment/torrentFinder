@@ -61,9 +61,9 @@ const torrentFinder = {
     torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
     let selectedTorrents = torrents.filter(torrent => torrent.releaseDate === movie.releaseDate);
-    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '1080p' && torrent.releaseDate === movie.releaseDate))
-    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '720p' && torrent.releaseDate === movie.releaseDate))
-    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === undefined && torrent.releaseDate === movie.releaseDate))
+    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === '1080p'))
+    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === '720p'))
+    selectedTorrents = selectedTorrents.concat(selectedTorrents.filter(torrent => torrent.quality === undefined))
     return selectedTorrents.splice(0, 20);
   },
 };
