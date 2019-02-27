@@ -33,6 +33,7 @@ const leetx = {
             leechers: parseInt($r('.coll-3').text()),
             size: $r('.coll-4').text(),
             quality: parsedTitle.resolution,
+            releaseDate: parsedTitle.year,
           });
         });
         return torrents;

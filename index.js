@@ -7,16 +7,6 @@ const hc = require('./healthCalculator.js');
 const rarbg = new RarbgApi();
 const ytsUri = 'https://yts.am/api/v2/list_movies.json';
 
-async function rarbgFinder(movie, category) {
-  const categorySearch = category || 'movies';
-  const result = await rarbg.search({
-    search_themoviedb: movie.id,
-    sort: 'seeders',
-    category: categorySearch,
-  });
-  return result;
-}
-
 async function ytsFinder(movie) {
   const title = escape(movie.title);
   const request = await axios.get(`${ytsUri}?query_term=${title}&sort_by=seeds`);
@@ -33,6 +23,7 @@ async function ytsFinder(movie) {
         seeders: t.seeds,
         leechers: t.peers,
         ratio: hc.calcHealth({ seeders: t.seeds, leechers: t.peers }),
+        releaseDate: resultMovie.year,
       };
       torrents.push(torrent);
     });
@@ -67,13 +58,22 @@ const torrentFinder = {
     } catch (err) {
     }
     let torrents = leetxTorrents.concat(ytsTorrents);
+    //console.log(torrents)
     torrents = torrents.filter(torrent => torrent.title.toLowerCase() === movie.title.toLowerCase())
     torrents = _.sortBy(torrents, (e) => e.ratio).reverse();
-    let selectedTorrents = torrents.filter(torrent => torrent.quality === '1080p');
-    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '720p'))
-    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '480p'))
+    let selectedTorrents = torrents.filter(torrent => torrent.releaseDate === movie.releaseDate);
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '1080p' && torrent.releaseDate === movie.releaseDate))
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === '720p' && torrent.releaseDate === movie.releaseDate))
+    selectedTorrents = selectedTorrents.concat(torrents.filter(torrent => torrent.quality === undefined && torrent.releaseDate === movie.releaseDate))
     return selectedTorrents.splice(0, 20);
   },
 };
+
+torrentFinder.search({
+  title: 'vice',
+  releaseDate: 2018,
+}).then((res) => {
+  console.log(res)
+})
 
 module.exports = torrentFinder;
